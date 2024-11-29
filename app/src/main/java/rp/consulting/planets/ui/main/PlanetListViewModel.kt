@@ -1,11 +1,21 @@
 package rp.consulting.planets.ui.main
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class MainViewModel : ViewModel() {
+class PlanetListViewModel : ViewModel() {
 
-    fun loadData() : State{
-        return State.Content(
+ private   val state = MutableLiveData<State>()
+    val viewState: LiveData<State>
+        get() = state
+
+
+    fun loadData() {
+
+        state.value = State.Loading
+
+       state.value = State.Content(
             listOf(PlanetData("Terra","bom lugar"),
                     PlanetData("Júpiter","bom lugar"),
                     PlanetData("Mercúrio","bom lugar"),
@@ -15,6 +25,8 @@ class MainViewModel : ViewModel() {
 
                 )
         )
+
+        state.value = State.Error
     }
 
 }

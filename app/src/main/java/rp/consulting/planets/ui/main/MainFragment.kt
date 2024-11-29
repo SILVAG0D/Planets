@@ -15,12 +15,12 @@ import rp.consulting.planets.R
 
 class MainFragment : Fragment() {
 
-    private lateinit var viewModel: MainViewModel
+    private lateinit var viewModel: PlanetListViewModel
     private val adapter = PlanetsAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(PlanetListViewModel::class.java)
         // TODO: Use the ViewModel
     }
 
@@ -40,25 +40,27 @@ class MainFragment : Fragment() {
         list.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
-        val state = viewModel.loadData()
-        when(state){
-            is State.Content -> {
-                adapter.setData(state.list)
-                list.adapter = adapter
-                list.isVisible = true
-                loading.isVisible = false
-                error.isVisible = false
-            }
-            State.Error -> {
-                list.isVisible =false
-                loading.isVisible = false
-                error.isVisible = true
-            }
-            State.Loading -> {
-                list.isVisible = false
-                loading.isVisible = true
-                error.isVisible = false
+        viewModel.viewState.observe(viewLifecycleOwner){
+            when(it){
+                is State.Content -> {
+                    adapter.setData(it.list)
+                    list.adapter = adapter
+                    list.isVisible = true
+                    loading.isVisible = false
+                    error.isVisible = false
+                }
+                State.Error -> {
+                    list.isVisible =false
+                    loading.isVisible = false
+                    error.isVisible = true
+                }
+                State.Loading -> {
+                    list.isVisible = false
+                    loading.isVisible = true
+                    error.isVisible = false
+                }
             }
         }
+        viewModel.loadData()
     }
 }
